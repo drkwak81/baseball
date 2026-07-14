@@ -95,13 +95,42 @@
   .sprite{position:absolute;pointer-events:none;z-index:2;}
   .sprite svg{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));}
   #spPitcher{left:50%;top:47%;width:40px;transform:translate(-50%,-94%);}
-  #spBatter{left:50%;top:79%;width:46px;transform:translate(-130%,-86%);}
-  .batg{transform-box:fill-box;transform-origin:25% 88%;transition:transform .09s ease-in;}
-  #spBatter.swing .batg{transform:rotate(-115deg);}
+  #spBatter{left:50%;top:79%;width:48px;transform:translate(-122%,-86%);}
+  .batg{transform-box:fill-box;transform-origin:30% 92%;}
+  @keyframes swingk{0%{transform:rotate(0);}18%{transform:rotate(14deg);}50%{transform:rotate(-175deg);}74%{transform:rotate(-138deg);}100%{transform:rotate(-152deg);}}
+  #spBatter.swing .batg{animation:swingk .32s cubic-bezier(.25,.9,.3,1) forwards;}
+  @keyframes twist{0%{transform:translate(-122%,-86%) rotate(0);}50%{transform:translate(-118%,-86%) rotate(-9deg);}100%{transform:translate(-122%,-86%) rotate(0);}}
+  #spBatter.swing{animation:twist .32s ease;}
+  .armR{transform-box:fill-box;transform-origin:40% 10%;}
+  @keyframes armWhip{0%{transform:rotate(0);}38%{transform:rotate(-165deg);}70%{transform:rotate(26deg);}100%{transform:rotate(0);}}
+  #spPitcher.throw .armR{animation:armWhip .5s ease;}
   @keyframes windup{0%{transform:translate(-50%,-94%) rotate(0);}35%{transform:translate(-50%,-99%) rotate(-9deg);}65%{transform:translate(-50%,-91%) rotate(7deg);}100%{transform:translate(-50%,-94%) rotate(0);}}
   #spPitcher.throw{animation:windup .5s ease;}
   #ballShadow{position:absolute;left:50%;top:79.5%;width:15px;height:5px;border-radius:50%;
     background:rgba(0,0,0,.4);transform:translate(-50%,-50%) scale(.3);opacity:0;pointer-events:none;}
+  #ball::after{content:"";position:absolute;left:50%;top:-170%;width:55%;height:190%;
+    transform:translateX(-50%);border-radius:50%;
+    background:linear-gradient(180deg,transparent,rgba(255,255,255,.45));}
+
+  /* ---------- 구속 표시 / 임팩트 / 타석 디테일 ---------- */
+  #speedPop{position:absolute;left:50%;top:31%;transform:translate(-50%,-50%);z-index:4;
+    background:rgba(8,12,17,.88);border:1px solid var(--board-line);color:var(--glow);
+    font-family:ui-monospace,monospace;font-weight:800;font-size:12.5px;letter-spacing:1px;
+    padding:4px 11px;border-radius:9px;opacity:0;pointer-events:none;white-space:nowrap;}
+  @keyframes spdpop{0%{opacity:0;transform:translate(-50%,-30%);}15%{opacity:1;transform:translate(-50%,-50%);}80%{opacity:1;}100%{opacity:0;transform:translate(-50%,-70%);}}
+  #speedPop.show{animation:spdpop 1.1s ease forwards;}
+  #impact{position:absolute;left:50%;top:78%;width:50px;height:50px;z-index:4;pointer-events:none;
+    transform:translate(-50%,-50%) scale(.2);opacity:0;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.95) 0 16%,rgba(255,210,63,.85) 28%,rgba(255,140,66,.4) 45%,transparent 62%);}
+  @keyframes impactk{0%{opacity:1;transform:translate(-50%,-50%) scale(.25);}100%{opacity:0;transform:translate(-50%,-50%) scale(1.7);}}
+  #impact.show{animation:impactk .38s ease-out forwards;}
+  .bbox{position:absolute;top:78.5%;width:21px;height:31px;border:2px solid rgba(255,255,255,.35);
+    border-radius:3px;transform:translate(-50%,-50%);pointer-events:none;}
+  #bboxL{left:calc(50% - 27px);} #bboxR{left:calc(50% + 27px);}
+  .ext1{position:absolute;right:-46%;bottom:-1.5px;width:46%;height:3px;
+    background:linear-gradient(to right,rgba(255,255,255,.65),transparent);}
+  .ext3{position:absolute;left:-1.5px;top:-46%;width:3px;height:46%;
+    background:linear-gradient(to top,rgba(255,255,255,.65),transparent);}
 
   .matchup{
     position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;
@@ -227,14 +256,18 @@
     <div class="rubber"></div>
     <div class="diamond">
       <div class="dirtcircle"></div>
+      <div class="ext1"></div><div class="ext3"></div>
       <div class="base b1" id="base1"></div>
       <div class="base b2" id="base2"></div>
       <div class="base b3" id="base3"></div>
       <div class="plate"></div>
     </div>
+    <div class="bbox" id="bboxL"></div><div class="bbox" id="bboxR"></div>
     <div class="sprite" id="spPitcher"></div>
     <div class="sprite" id="spBatter"></div>
     <div id="ballShadow"></div>
+    <div id="speedPop"></div>
+    <div id="impact"></div>
     <div class="matchup">
       <div class="mu-card" id="muPitcher"><span class="tag">투수</span><b>-</b><div class="stat-bar"><i style="width:0%"></i></div></div>
       <div class="mu-card" id="muBatter" style="text-align:right;"><span class="tag">타자</span><b>-</b><div class="stat-bar"><i style="width:0%"></i></div></div>
@@ -485,11 +518,33 @@ function crack(){ sfxCrack(.5); }
 function cheer(){ sfxCrowd(1.2,1.5); }
 function vib(p){ if(navigator.vibrate) try{navigator.vibrate(p);}catch(e){} }
 
-/* --- 필드 위 전신 스프라이트 (타자=배트, 투수=글러브) --- */
+/* --- 필드 위 전신 스프라이트 (타자=뒷모습 타격자세, 투수=정면 투구자세) --- */
 function spriteSVG(name,color,mode){
   const h=hashName(name);
   const skin=["#f6d5b8","#f0c49a","#e6b58b","#d19a6b"][h%4];
-  const bat=mode==="bat";
+  const hair=["#17120d","#2e1f14","#3c2a18","#0d0d12"][(h>>2)%4];
+  if(mode==="bat") return `<svg viewBox="0 0 100 132" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="126" rx="27" ry="4.5" fill="rgba(0,0,0,.28)"/>
+    <rect x="28" y="87" width="11" height="34" rx="5" fill="#ececec" transform="rotate(10 34 90)"/>
+    <rect x="61" y="87" width="11" height="34" rx="5" fill="#dedede" transform="rotate(-10 66 90)"/>
+    <rect x="22" y="117" width="17" height="8" rx="3" fill="#20262d"/>
+    <rect x="61" y="117" width="17" height="8" rx="3" fill="#20262d"/>
+    <path d="M31,54 L69,54 L74,93 L26,93 Z" fill="${color}"/>
+    <path d="M31,54 L69,54 L74,93 L26,93 Z" fill="rgba(255,255,255,.10)"/>
+    <rect x="27" y="89" width="46" height="5" rx="2" fill="#20262d"/>
+    <rect x="42" y="46" width="16" height="10" rx="4" fill="${skin}"/>
+    <path d="M38,62 Q56,55 69,46" stroke="${skin}" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M60,62 Q68,54 70,47" stroke="${skin}" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <g class="batg">
+      <rect x="68" y="-2" width="8" height="50" rx="4" fill="#c98a4b" transform="rotate(24 72 45)"/>
+      <rect x="67.5" y="36" width="9" height="9" rx="3.5" fill="#8a5a2b" transform="rotate(24 72 45)"/>
+      <circle cx="71" cy="45" r="5.5" fill="${skin}"/>
+    </g>
+    <circle cx="50" cy="38" r="15" fill="${hair}"/>
+    <path d="M34,42 Q34,18 50,18 Q66,18 66,42 Q58,48 50,47 Q42,48 34,42 Z" fill="${color}"/>
+    <path d="M34,42 Q34,18 50,18 Q66,18 66,42 Q58,48 50,47 Q42,48 34,42 Z" fill="rgba(255,255,255,.14)"/>
+    <circle cx="50" cy="18" r="2" fill="rgba(0,0,0,.3)"/>
+  </svg>`;
   return `<svg viewBox="0 0 100 132" xmlns="http://www.w3.org/2000/svg">
     <ellipse cx="50" cy="126" rx="25" ry="4.5" fill="rgba(0,0,0,.28)"/>
     <rect x="37" y="92" width="10" height="30" rx="4" fill="#ececec"/>
@@ -499,15 +554,12 @@ function spriteSVG(name,color,mode){
     <path d="M31,58 L69,58 L75,96 L25,96 Z" fill="${color}"/>
     <path d="M31,58 L69,58 L75,96 L25,96 Z" fill="rgba(255,255,255,.14)"/>
     <path d="M44,58 L50,68 L56,58 Z" fill="#f4f6f8"/>
-    ${bat
-      ?`<rect x="24" y="62" width="9" height="20" rx="4.5" fill="${skin}" transform="rotate(26 28 64)"/>
-        <g class="batg">
-          <rect x="62" y="12" width="8" height="52" rx="4" fill="#c98a4b" transform="rotate(30 66 62)"/>
-          <rect x="61" y="54" width="10" height="13" rx="4.5" fill="${skin}" transform="rotate(30 66 62)"/>
-        </g>`
-      :`<rect x="24" y="60" width="9" height="24" rx="4.5" fill="${skin}" transform="rotate(16 28 62)"/>
-        <rect x="67" y="60" width="9" height="24" rx="4.5" fill="${skin}" transform="rotate(-16 72 62)"/>
-        <circle cx="27" cy="86" r="8" fill="#8a5a2b"/><circle cx="27" cy="86" r="4.5" fill="#6e4620"/>`}
+    <rect x="24" y="60" width="9" height="24" rx="4.5" fill="${skin}" transform="rotate(16 28 62)"/>
+    <circle cx="27" cy="86" r="8" fill="#8a5a2b"/><circle cx="27" cy="86" r="4.5" fill="#6e4620"/>
+    <g class="armR">
+      <rect x="66" y="58" width="9" height="26" rx="4.5" fill="${skin}" transform="rotate(-12 70 60)"/>
+      <circle cx="75" cy="85" r="5" fill="#fff" stroke="#d0604a" stroke-width="1.4"/>
+    </g>
     <circle cx="50" cy="40" r="17" fill="${skin}"/>
     <path d="M34,38 Q34,20 50,20 Q66,20 66,38 Z" fill="${color}"/>
     <path d="M32,36 Q50,43 68,36 L68,40 Q50,47 32,40 Z" fill="rgba(0,0,0,.3)"/>
@@ -676,7 +728,13 @@ function animatePitch(duration){
 }
 function hideBall(){ cancelAnimationFrame(pitchAnim); $("ball").style.opacity=0; $("ball").style.top="46%";
   $("ballShadow").style.opacity=0; $("zone").classList.remove("show"); }
+function showSpeed(dur,label){    // 투구 시간 → 구속(km/h) 환산 표시
+  const k=Math.max(92,Math.min(161,Math.round(160-(dur-560)*0.085)));
+  const el=$("speedPop"); el.textContent=`${label} ${k}km/h`;
+  el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
+}
 function flyBall(kind){                        // 타구가 날아가는 연출
+  const im=$("impact"); im.classList.remove("show"); void im.offsetWidth; im.classList.add("show");
   const el=$("ball");
   const dx=rand(-28,28), topEnd=kind==="HR"?6:kind==="GO"?62:16+rand(0,12);
   const dur=kind==="GO"?420:720;
@@ -781,6 +839,7 @@ async function playerAtBat(){
     const base=1000-eS*2.2;                          // 지친 투수의 공은 느리다
     const duration=Math.max(600, base*pt.spd*rand(.95,1.05));
     drain("away",2.6);
+    showSpeed(duration,pt.n);
     say(`${pitcher[0]}, ${pt.n} 승부! <b>지금이야, 타이밍!</b>`);
     const btn=$("btnSwing"); btn.disabled=false;
     let swung=false, swingTime=0;
@@ -900,6 +959,7 @@ async function playerPitching(){
     const eS=effStuff("home");
     drain("home",2.6);
     say(`${pt.n} 투구! ${acc>=88?"<b>완벽한 코스!</b>":acc>=60?"좋은 공!":acc>=30?"조금 몰렸다…":"어이쿠, 크게 빠졌다!"}`);
+    showSpeed(700*pt.spd,pt.n);
     await animatePitch(700*pt.spd); hideBall();
     if(acc>=22) swingAnim();   // CPU 타자 스윙 모션
     // 3) 판정
