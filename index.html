@@ -589,73 +589,136 @@ function crack(){ sfxCrack(.5); }
 function cheer(){ sfxCrowd(1.2,1.5); }
 function vib(p){ if(SET.vib&&navigator.vibrate) try{navigator.vibrate(p);}catch(e){} }
 
-/* --- 필드 위 전신 스프라이트 (타자=뒷모습 타격자세, 투수=정면 투구자세) --- */
+/* --- 필드 위 전신 스프라이트 (프리미엄 벡터 아트: 음영/외곽선/디테일) --- */
+const SPRITE_DEFS=`<defs>
+  <linearGradient id="shV" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".26"/>
+  </linearGradient>
+  <linearGradient id="shSide" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset=".35" stop-color="#000" stop-opacity="0"/>
+    <stop offset=".75" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/>
+  </linearGradient>
+  <linearGradient id="woodG" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#e0aa66"/><stop offset=".5" stop-color="#c98a4b"/><stop offset="1" stop-color="#9c6532"/>
+  </linearGradient>
+  <radialGradient id="skinSh" cx=".38" cy=".32" r=".95">
+    <stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity=".14"/>
+  </radialGradient>
+</defs>`;
+const OUT='stroke="rgba(20,14,8,.35)" stroke-width="1.4"';
 function spriteSVG(name,color,mode){
   const h=hashName(name);
   const skin=["#f6d5b8","#f0c49a","#e6b58b","#d19a6b"][h%4];
   const hair=["#17120d","#2e1f14","#3c2a18","#0d0d12"][(h>>2)%4];
-  if(mode==="bat") return `<svg viewBox="0 0 100 132" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="50" cy="126" rx="27" ry="4.5" fill="rgba(0,0,0,.28)"/>
-    <rect x="28" y="87" width="11" height="34" rx="5" fill="#ececec" transform="rotate(10 34 90)"/>
-    <rect x="61" y="87" width="11" height="34" rx="5" fill="#dedede" transform="rotate(-10 66 90)"/>
-    <rect x="22" y="117" width="17" height="8" rx="3" fill="#20262d"/>
-    <rect x="61" y="117" width="17" height="8" rx="3" fill="#20262d"/>
-    <path d="M31,54 L69,54 L74,93 L26,93 Z" fill="${color}"/>
-    <path d="M31,54 L69,54 L74,93 L26,93 Z" fill="rgba(255,255,255,.10)"/>
-    <rect x="27" y="89" width="46" height="5" rx="2" fill="#20262d"/>
-    <rect x="42" y="46" width="16" height="10" rx="4" fill="${skin}"/>
-    <path d="M38,62 Q56,55 69,46" stroke="${skin}" stroke-width="8" fill="none" stroke-linecap="round"/>
-    <path d="M60,62 Q68,54 70,47" stroke="${skin}" stroke-width="8" fill="none" stroke-linecap="round"/>
+  if(mode==="bat") return `<svg viewBox="0 0 100 132" xmlns="http://www.w3.org/2000/svg">${SPRITE_DEFS}
+    <ellipse cx="50" cy="126" rx="27" ry="4.5" fill="rgba(0,0,0,.30)"/>
+    <ellipse cx="50" cy="126" rx="18" ry="3" fill="rgba(0,0,0,.18)"/>
+    <!-- 다리: 바지 + 팀컬러 스타킹 + 스파이크 -->
+    <g transform="rotate(10 34 90)"><rect x="28" y="87" width="11" height="22" rx="5" fill="#f2f2f2" ${OUT}/><rect x="28" y="87" width="11" height="22" rx="5" fill="url(#shSide)"/><rect x="28.5" y="106" width="10" height="14" rx="4" fill="${color}"/></g>
+    <g transform="rotate(-10 66 90)"><rect x="61" y="87" width="11" height="22" rx="5" fill="#e6e6e6" ${OUT}/><rect x="61" y="87" width="11" height="22" rx="5" fill="url(#shSide)"/><rect x="61.5" y="106" width="10" height="14" rx="4" fill="${color}"/></g>
+    <path d="M22,124 Q22,117 30,117 L39,117 L39,125 L24,125 Z" fill="#1b2026" ${OUT}/>
+    <path d="M78,124 Q78,117 70,117 L61,117 L61,125 L76,125 Z" fill="#1b2026" ${OUT}/>
+    <rect x="23" y="122.5" width="16" height="2" fill="#fff" opacity=".65"/><rect x="61" y="122.5" width="16" height="2" fill="#fff" opacity=".65"/>
+    <!-- 등판 저지 -->
+    <path d="M31,54 L69,54 L74,92 L26,92 Z" fill="${color}" ${OUT}/>
+    <path d="M31,54 L69,54 L74,92 L26,92 Z" fill="url(#shSide)"/>
+    <path d="M31,54 L69,54 L71,60 L29,60 Z" fill="#fff" opacity=".16"/>
+    <path d="M26,92 L74,92 L74.5,95 L25.5,95 Z" fill="#fff" opacity=".22"/>
+    <!-- 벨트 + 버클 -->
+    <rect x="27" y="90" width="46" height="5.5" rx="2" fill="#20262d" ${OUT}/>
+    <rect x="46" y="90.5" width="8" height="4.5" rx="1.5" fill="#c9a227"/>
+    <!-- 목 -->
+    <rect x="42" y="46" width="16" height="10" rx="4" fill="${skin}"/><rect x="42" y="46" width="16" height="10" rx="4" fill="url(#skinSh)"/>
+    <!-- 팔: 리드암 보호대 + 배팅장갑 -->
+    <path d="M38,62 Q56,55 68,46" stroke="${skin}" stroke-width="8.5" fill="none" stroke-linecap="round"/>
+    <path d="M60,62 Q68,54 70,47" stroke="${skin}" stroke-width="8.5" fill="none" stroke-linecap="round"/>
+    <rect x="40" y="56" width="12" height="8" rx="4" fill="${color}" opacity=".92" transform="rotate(-18 46 60)"/>
+    <!-- 배트: 우드 그라데이션 + 그립테이프 -->
     <g class="batg">
-      <rect x="68" y="-2" width="8" height="50" rx="4" fill="#c98a4b" transform="rotate(24 72 45)"/>
-      <rect x="67.5" y="36" width="9" height="9" rx="3.5" fill="#8a5a2b" transform="rotate(24 72 45)"/>
-      <circle cx="71" cy="45" r="5.5" fill="${skin}"/>
+      <rect x="68" y="-3" width="8.5" height="51" rx="4.2" fill="url(#woodG)" ${OUT} transform="rotate(24 72 45)"/>
+      <rect x="68" y="34" width="8.5" height="11" rx="3.5" fill="#2a2a2e" transform="rotate(24 72 45)"/>
+      <rect x="68" y="-3" width="8.5" height="4" rx="2" fill="#8a5a2b" transform="rotate(24 72 45)"/>
+      <circle cx="71" cy="45" r="5.8" fill="#f4f6f8" ${OUT}/>
+      <path d="M67,44 L75,44" stroke="#b9c2cb" stroke-width="1.4"/>
     </g>
+    <!-- 뒷머리 + 배팅 헬멧 -->
     <circle cx="50" cy="38" r="15" fill="${hair}"/>
-    <path d="M34,42 Q34,18 50,18 Q66,18 66,42 Q58,48 50,47 Q42,48 34,42 Z" fill="${color}"/>
-    <path d="M34,42 Q34,18 50,18 Q66,18 66,42 Q58,48 50,47 Q42,48 34,42 Z" fill="rgba(255,255,255,.14)"/>
-    <circle cx="50" cy="18" r="2" fill="rgba(0,0,0,.3)"/>
+    <path d="M33.5,42 Q33.5,17.5 50,17.5 Q66.5,17.5 66.5,42 Q58,48 50,47 Q42,48 33.5,42 Z" fill="${color}" ${OUT}/>
+    <path d="M33.5,42 Q33.5,17.5 50,17.5 Q66.5,17.5 66.5,42 Q58,48 50,47 Q42,48 33.5,42 Z" fill="url(#shV)"/>
+    <ellipse cx="43" cy="24" rx="8" ry="4.5" fill="#fff" opacity=".30" transform="rotate(-18 43 24)"/>
+    <path d="M36,43 Q50,49.5 64,43" stroke="rgba(0,0,0,.3)" stroke-width="1.6" fill="none"/>
+    <circle cx="50" cy="17.5" r="2" fill="rgba(0,0,0,.35)"/>
   </svg>`;
-  return `<svg viewBox="0 0 100 132" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="50" cy="126" rx="25" ry="4.5" fill="rgba(0,0,0,.28)"/>
-    <rect x="37" y="92" width="10" height="30" rx="4" fill="#ececec"/>
-    <rect x="53" y="92" width="10" height="30" rx="4" fill="#dedede"/>
-    <rect x="34" y="118" width="15" height="7" rx="3" fill="#20262d"/>
-    <rect x="51" y="118" width="15" height="7" rx="3" fill="#20262d"/>
-    <path d="M31,58 L69,58 L75,96 L25,96 Z" fill="${color}"/>
-    <path d="M31,58 L69,58 L75,96 L25,96 Z" fill="rgba(255,255,255,.14)"/>
-    <path d="M44,58 L50,68 L56,58 Z" fill="#f4f6f8"/>
+  return `<svg viewBox="0 0 100 132" xmlns="http://www.w3.org/2000/svg">${SPRITE_DEFS}
+    <ellipse cx="50" cy="126" rx="25" ry="4.5" fill="rgba(0,0,0,.30)"/>
+    <ellipse cx="50" cy="126" rx="16" ry="3" fill="rgba(0,0,0,.18)"/>
+    <!-- 다리 + 스타킹 + 스파이크 -->
+    <rect x="37" y="92" width="10" height="19" rx="4" fill="#f2f2f2" ${OUT}/><rect x="37" y="108" width="10" height="12" rx="4" fill="${color}"/>
+    <rect x="53" y="92" width="10" height="19" rx="4" fill="#e6e6e6" ${OUT}/><rect x="53" y="108" width="10" height="12" rx="4" fill="${color}"/>
+    <path d="M33,124 Q33,117.5 40,117.5 L47,117.5 L47,125 L35,125 Z" fill="#1b2026" ${OUT}/>
+    <path d="M67,124 Q67,117.5 60,117.5 L53,117.5 L53,125 L65,125 Z" fill="#1b2026" ${OUT}/>
+    <!-- 저지: 단추 플래킷 + 어깨 스트라이프 -->
+    <path d="M31,58 L69,58 L75,95 L25,95 Z" fill="${color}" ${OUT}/>
+    <path d="M31,58 L69,58 L75,95 L25,95 Z" fill="url(#shSide)"/>
+    <path d="M50,58 L50,95" stroke="#fff" stroke-width="2.4" opacity=".85"/>
+    <circle cx="50" cy="70" r="1.2" fill="#dfe5ea"/><circle cx="50" cy="80" r="1.2" fill="#dfe5ea"/><circle cx="50" cy="89" r="1.2" fill="#dfe5ea"/>
+    <path d="M31,58 L38,58 L36,66 L30.5,64 Z" fill="#fff" opacity=".25"/><path d="M69,58 L62,58 L64,66 L69.5,64 Z" fill="#fff" opacity=".25"/>
+    <path d="M44,58 L50,68 L56,58 Z" fill="#f4f6f8" ${OUT}/>
+    <rect x="30" y="91" width="40" height="4.5" rx="2" fill="#20262d"/>
+    <!-- 글러브 팔: 레이스 디테일 -->
     <rect x="24" y="60" width="9" height="24" rx="4.5" fill="${skin}" transform="rotate(16 28 62)"/>
-    <circle cx="27" cy="86" r="8" fill="#8a5a2b"/><circle cx="27" cy="86" r="4.5" fill="#6e4620"/>
+    <circle cx="27" cy="86" r="8.5" fill="#9c6532" ${OUT}/><circle cx="27" cy="86" r="5" fill="#7a4d24"/>
+    <path d="M21,81 L24,79 M25,79.5 L27,77.5 M29,78 L31,80" stroke="#5d3a1a" stroke-width="1.3" stroke-linecap="round"/>
+    <!-- 투구 팔: 야구공 실밥 -->
     <g class="armR">
       <rect x="66" y="58" width="9" height="26" rx="4.5" fill="${skin}" transform="rotate(-12 70 60)"/>
-      <circle cx="75" cy="85" r="5" fill="#fff" stroke="#d0604a" stroke-width="1.4"/>
+      <circle cx="75" cy="85" r="5.4" fill="#fff" ${OUT}/>
+      <path d="M72,82.5 Q73.6,85 72,87.5 M78,82.5 Q76.4,85 78,87.5" stroke="#d0604a" stroke-width="1.1" fill="none"/>
     </g>
-    <circle cx="50" cy="40" r="17" fill="${skin}"/>
-    <path d="M34,38 Q34,20 50,20 Q66,20 66,38 Z" fill="${color}"/>
-    <path d="M32,36 Q50,43 68,36 L68,40 Q50,47 32,40 Z" fill="rgba(0,0,0,.3)"/>
-    <circle cx="44" cy="43" r="2" fill="#1c1c1c"/><circle cx="56" cy="43" r="2" fill="#1c1c1c"/>
+    <!-- 얼굴 + 모자 -->
+    <circle cx="50" cy="40" r="17" fill="${skin}"/><circle cx="50" cy="40" r="17" fill="url(#skinSh)"/>
+    <path d="M34,38 Q34,20 50,20 Q66,20 66,38 Z" fill="${color}" ${OUT}/>
+    <path d="M34,38 Q34,20 50,20 Q66,20 66,38 Z" fill="url(#shV)"/>
+    <ellipse cx="43" cy="26" rx="7" ry="4" fill="#fff" opacity=".28" transform="rotate(-16 43 26)"/>
+    <path d="M32,36 Q50,43 68,36 L68,40 Q50,47 32,40 Z" fill="${color}"/>
+    <path d="M32,36 Q50,43 68,36 L68,40 Q50,47 32,40 Z" fill="rgba(0,0,0,.38)"/>
+    <circle cx="44" cy="43" r="2.1" fill="#1c1c1c"/><circle cx="56" cy="43" r="2.1" fill="#1c1c1c"/>
+    <circle cx="44.7" cy="42.3" r=".7" fill="#fff"/><circle cx="56.7" cy="42.3" r=".7" fill="#fff"/>
+    <circle cx="39" cy="48" r="2.2" fill="#e8927c" opacity=".38"/><circle cx="61" cy="48" r="2.2" fill="#e8927c" opacity=".38"/>
     <path d="M45,51 Q50,55 55,51" stroke="#8a4b3a" stroke-width="2" fill="none" stroke-linecap="round"/>
   </svg>`;
 }
 function swingAnim(){ const s=$("spBatter"); s.classList.remove("swing"); void s.offsetWidth;
   s.classList.add("swing"); setTimeout(()=>s.classList.remove("swing"),260); }
 
-/* --- 관중 웅성거림 앰비언스 --- */
+/* --- 관중 웅성거림 앰비언스 (저역 머머 + LFO 함성 파도) --- */
 let ambientNode=null;
 function ambient(on){
   const c=ac(); if(!c)return;
   if(on&&!ambientNode&&!muted){
     try{
-      const len=c.sampleRate*2, buf=c.createBuffer(1,len,c.sampleRate), d=buf.getChannelData(0);
-      for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
-      const s=c.createBufferSource(); s.buffer=buf; s.loop=true;
-      const f=c.createBiquadFilter(); f.type="bandpass"; f.frequency.value=950; f.Q.value=.3;
-      const g=c.createGain(); g.gain.value=.026;
-      s.connect(f); f.connect(g); g.connect(c.destination); s.start();
-      ambientNode={s};
+      const mk=(f0,q,type,vol,lfoHz,lfoDepth)=>{
+        const len=c.sampleRate*3, buf=c.createBuffer(1,len,c.sampleRate), d=buf.getChannelData(0);
+        for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+        const s=c.createBufferSource(); s.buffer=buf; s.loop=true;
+        const f=c.createBiquadFilter(); f.type=type; f.frequency.value=f0; f.Q.value=q;
+        const g=c.createGain(); g.gain.value=vol;
+        s.connect(f); f.connect(g); g.connect(c.destination); s.start();
+        let lfo=null;
+        if(lfoHz){ lfo=c.createOscillator(); lfo.frequency.value=lfoHz;
+          const lg=c.createGain(); lg.gain.value=lfoDepth;
+          lfo.connect(lg); lg.connect(g.gain); lfo.start(); }
+        return {s,lfo};
+      };
+      const murmur=mk(380,0.4,"lowpass",.034,0.09,.016);   // 낮은 웅성웅성 + 느린 파도
+      const cheers=mk(1000,0.9,"bandpass",.009,0.21,.006); // 멀리서 커졌다 작아지는 함성
+      ambientNode={list:[murmur,cheers]};
     }catch(e){}
-  }else if(!on&&ambientNode){ try{ambientNode.s.stop();}catch(e){} ambientNode=null; }
+  }else if(!on&&ambientNode){
+    ambientNode.list.forEach(x=>{ try{x.s.stop(); if(x.lfo)x.lfo.stop();}catch(e){} });
+    ambientNode=null;
+  }
 }
 
 /* ================= 상태 ================= */
