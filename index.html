@@ -213,7 +213,8 @@
   .team-card:active{transform:scale(.95);}
   .team-card.sel{border-color:#fff;box-shadow:0 0 0 3px var(--glow-soft);}
   h2.ov-title{font-size:20px;font-weight:900;margin-bottom:4px;}
-  .seg{display:flex;gap:7px;margin:16px 0 8px;flex-wrap:wrap;justify-content:center;}
+  .seg{display:flex;gap:7px;margin:6px 0 4px;flex-wrap:wrap;justify-content:center;}
+  .seg-label{font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:12px;font-weight:700;}
   .seg button{padding:9px 14px;border-radius:10px;border:1.5px solid var(--board-line);background:#10161d;color:var(--muted);font-weight:700;font-size:13px;font-family:inherit;}
   .seg button.on{border-color:var(--glow);color:var(--glow);}
 
@@ -311,11 +312,18 @@
   <!-- 팀 선택 -->
   <div class="overlay hidden" id="ovTeam">
     <h2 class="ov-title" id="teamSelTitle">내 팀을 골라줘!</h2>
+    <div class="seg-label">경기 길이</div>
     <div class="seg" id="inningSeg">
       <button data-in="3" class="on">3이닝</button>
       <button data-in="5">5이닝</button>
       <button data-in="7">7이닝</button>
       <button data-in="9">9이닝</button>
+    </div>
+    <div class="seg-label">난이도</div>
+    <div class="seg" id="diffSeg">
+      <button data-d="easy">쉬움</button>
+      <button data-d="normal" class="on">보통</button>
+      <button data-d="hard">어려움</button>
     </div>
     <div class="team-grid" id="teamGrid"></div>
     <div style="height:14px"></div>
@@ -394,6 +402,11 @@ const TEAMS=[
   pit:[["구창모",86,72,"선발"],["신민혁",72,80,"선발"],["김영규",76,72,"중간"],["임정호",74,70,"중간"],["류진욱",78,68,"중간"],["김진호",80,72,"마무리"]],
   bench:[["손아섭",82,60],["오영수",66,72],["천재환",68,58],["박세혁",68,60],["도태훈",70,54]]}
 ];
+const DIFFS={   // 난이도: 판정폭/안타율/상대구속/상대타격 보정
+ easy:  {label:"쉬움",  win:1.30, hit:1.15, pspd:1.12, cpu:-7, cHR:0.80},
+ normal:{label:"보통",  win:1.00, hit:1.00, pspd:1.00, cpu: 0, cHR:1.00},
+ hard:  {label:"어려움", win:0.85, hit:0.90, pspd:0.95, cpu:+5, cHR:1.10}
+};
 const PITCH_TYPES=[
  {n:"직구",eng:"FAST",spd:.82,bonus:6,ico:"🔥"},
  {n:"슬라이더",eng:"SLD",spd:1.0,bonus:10,ico:"⚡"},
@@ -596,7 +609,8 @@ const G={
   batIdx:{away:0,home:0},
   hits:{away:0,home:0},
   myHits:{},                        // 내 팀 타자 안타 기록 {이름:개수}
-  busy:false, over:false
+  busy:false, over:false,
+  D:DIFFS.normal
 };
 // 플레이어는 항상 홈팀(말 공격), CPU는 원정팀(초 공격)
 const isPlayerBatting=()=>!G.top;
@@ -882,14 +896,14 @@ async function playerAtBat(){
       $("btnSwing").classList.toggle("bunting",buntMode);
       $("btnBunt").textContent=buntMode?"번트 취소":"번트";
       say(buntMode?`<b>${batter[0]}</b>, 번트 자세를 잡았다!`:`번트 취소, 강공으로 간다!`); };
-    await sleep(rand(500,1100));
+    await sleep(rand(1100,1900));   // 투구 전 작전 타임 (번트/도루/대타 선택 여유)
     locked=true; ["btnPH","btnSteal","btnBunt"].forEach(id=>$(id).disabled=true);
     if(preAction){ await preAction; if(G.outs>=3)return; continue; }
     const pt=PITCH_TYPES[Math.floor(Math.random()*PITCH_TYPES.length)];
     const eS=effStuff("away"), eC=effCtl("away");
     const isStrikeZone=Math.random()<0.4+eC*0.003;
     const base=1000-eS*2.2;                          // 지친 투수의 공은 느리다
-    const duration=Math.max(600, base*pt.spd*rand(.95,1.05));
+    const duration=Math.max(600, base*pt.spd*rand(.95,1.05)*G.D.pspd);   // 쉬움이면 공이 느리다
     drain("away",3);
     showSpeed(duration,pt.n);
     say(`${pitcher[0]}, ${pt.n} 승부! <b>${buntMode?"번트 타이밍!":"지금이야, 타이밍!"}</b>`);
@@ -944,20 +958,20 @@ async function playerAtBat(){
       }
     }else{
       const diff=Math.abs(swingTime-duration);
-      const perfectW=42+batter[1]*0.30;   // 퍼펙트 판정 (약 60~68ms)
-      const goodW=95+batter[1]*0.38;
-      const foulW=165;
+      const perfectW=(42+batter[1]*0.30)*G.D.win;   // 난이도별 판정 폭
+      const goodW=(95+batter[1]*0.38)*G.D.win;
+      const foulW=165*G.D.win;
       if(diff<=perfectW){
-        const r=Math.random()*100, hrCut=batter[2]*0.20+(isStrikeZone?2:0);   // 거포 홈런 ~20%
+        const r=Math.random()*100, hrCut=(batter[2]*0.18+(isStrikeZone?2:0))*G.D.hit;
         if(r<hrCut) await applyHitResult("HR",batterName,true);
-        else if(r<hrCut+15) await applyHitResult("2B",batterName,true);
-        else if(r<hrCut+15+34) await applyHitResult("1B",batterName,true);
+        else if(r<hrCut+14*G.D.hit) await applyHitResult("2B",batterName,true);
+        else if(r<hrCut+(14+32)*G.D.hit) await applyHitResult("1B",batterName,true);
         else await applyHitResult(Math.random()<.6?"FO":"GO",batterName,true);   // 정타도 잡힐 수 있다
         if(G.outs>=3||checkWalkoff())return; if(newBatterMsg())continue; else return;
       }else if(diff<=goodW){
         const r=Math.random()*100;
-        if(r<26+batter[1]*0.10) await applyHitResult("1B",batterName,true);
-        else if(r<32+batter[1]*0.10) await applyHitResult("2B",batterName,true);
+        if(r<(24+batter[1]*0.09)*G.D.hit) await applyHitResult("1B",batterName,true);
+        else if(r<(29+batter[1]*0.09)*G.D.hit) await applyHitResult("2B",batterName,true);
         else await applyHitResult(Math.random()<.5?"FO":"GO",batterName,true);
         if(G.outs>=3||checkWalkoff())return; if(newBatterMsg())continue; else return;
       }else if(diff<=foulW){
@@ -1072,17 +1086,17 @@ async function playerPitching(){
     if(acc<22){ G.balls++; fx("볼","#6fd3ff"); sfxBall();
       say(`크게 빠지는 공, <b>볼.</b> (${G.balls}B ${G.strikes}S)`); }
     else{
-      const margin=Q-skill+rand(-22,22);
-      if(margin>14){ G.strikes++; fx(Math.random()<.5?"헛스윙!":"스트라이크!","#ffb020"); sfxStrike(); vib(30);
+      const margin=Q-skill+rand(-22,22)-G.D.cpu;   // 난이도 높을수록 상대가 잘 친다
+      if(margin>16){ G.strikes++; fx(Math.random()<.5?"헛스윙!":"스트라이크!","#ffb020"); sfxStrike(); vib(30);
         say(`<b>${batterName}</b>, 방망이가 헛돌았다! (${G.balls}B ${G.strikes}S)`); }
-      else if(margin>-12){
+      else if(margin>-13){
         if(Math.random()<.30&&G.strikes<2){ G.strikes++; sfxFoul(); fx("파울","#e8e4da");
           say(`${batterName}, 간신히 커트! 파울. (${G.balls}B ${G.strikes}S)`); }
         else{ await applyHitResult(Math.random()<.55?"GO":"FO",batterName,false);
           if(G.outs>=3)return; sayCpuNext(); continue; }
       }
       else{
-        const r=Math.random()*100, hrCut=cpuBat[2]*0.24;
+        const r=Math.random()*100, hrCut=cpuBat[2]*0.26*G.D.cHR;
         if(r<hrCut) await applyHitResult("HR",batterName,false);
         else if(r<hrCut+20) await applyHitResult("2B",batterName,false);
         else if(r<hrCut+20+52) await applyHitResult("1B",batterName,false);
@@ -1226,19 +1240,24 @@ $("btnStart").onclick=()=>{ ac(); beep(660,.1,"square",.1);
   $("ovTitle").classList.add("hidden"); $("ovTeam").classList.remove("hidden");
   pickPhase="my"; picked=null;
   $("teamSelTitle").textContent="내 팀을 골라줘!";
-  $("inningSeg").style.display="flex";
+  $("inningSeg").style.display="flex"; $("diffSeg").style.display="flex";
+  document.querySelectorAll(".seg-label").forEach(x=>x.style.display="block");
   $("btnTeamOk").disabled=true;$("btnTeamOk").style.opacity=.4;
   buildTeamGrid(null,t=>{picked=t;$("btnTeamOk").disabled=false;$("btnTeamOk").style.opacity=1;});
 };
 document.querySelectorAll("#inningSeg button").forEach(b=>{
   b.onclick=()=>{ document.querySelectorAll("#inningSeg button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); G.maxInning=+b.dataset.in; };
 });
+document.querySelectorAll("#diffSeg button").forEach(b=>{
+  b.onclick=()=>{ document.querySelectorAll("#diffSeg button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); G.D=DIFFS[b.dataset.d]; };
+});
 $("btnTeamOk").onclick=()=>{
   beep(660,.1,"square",.1);
   if(pickPhase==="my"){
     G.myTeam=JSON.parse(JSON.stringify(picked)); picked=null; pickPhase="cpu";
     $("teamSelTitle").textContent="상대 팀은 어디?";
-    $("inningSeg").style.display="none";
+    $("inningSeg").style.display="none"; $("diffSeg").style.display="none";
+    document.querySelectorAll(".seg-label").forEach(x=>x.style.display="none");
     $("btnTeamOk").disabled=true;$("btnTeamOk").style.opacity=.4;
     $("btnTeamOk").textContent="이 팀과 대결!";
     buildTeamGrid(G.myTeam.id,t=>{picked=t;$("btnTeamOk").disabled=false;$("btnTeamOk").style.opacity=1;});
