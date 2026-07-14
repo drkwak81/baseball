@@ -857,20 +857,20 @@ async function playerAtBat(){
         say(`잘 골랐어! <b>볼.</b> (${G.balls}B ${G.strikes}S)`); }
     }else{
       const diff=Math.abs(swingTime-duration);
-      const perfectW=44+batter[1]*0.32;   // 컨택 좋으면 관대 (약 60~75ms)
-      const goodW=95+batter[1]*0.40;
+      const perfectW=38+batter[1]*0.26;   // 퍼펙트 판정 (약 55~62ms)
+      const goodW=92+batter[1]*0.38;
       const foulW=165;
       if(diff<=perfectW){
-        const r=Math.random()*100, hrCut=batter[2]*0.34+(isStrikeZone?3:0);
+        const r=Math.random()*100, hrCut=batter[2]*0.11+(isStrikeZone?2:0);   // 거포 홈런 ~12%
         if(r<hrCut) await applyHitResult("HR",batterName,true);
-        else if(r<hrCut+25) await applyHitResult("2B",batterName,true);
-        else if(r<hrCut+25+58) await applyHitResult("1B",batterName,true);
-        else await applyHitResult("FO",batterName,true);   // 정타여도 아주 가끔 정면 타구
+        else if(r<hrCut+14) await applyHitResult("2B",batterName,true);
+        else if(r<hrCut+14+36) await applyHitResult("1B",batterName,true);
+        else await applyHitResult(Math.random()<.6?"FO":"GO",batterName,true);   // 정타도 야수 정면이면 아웃!
         if(G.outs>=3||checkWalkoff())return; if(newBatterMsg())continue; else return;
       }else if(diff<=goodW){
         const r=Math.random()*100;
-        if(r<34+batter[1]*0.22) await applyHitResult("1B",batterName,true);
-        else if(r<42+batter[1]*0.22) await applyHitResult("2B",batterName,true);
+        if(r<20+batter[1]*0.15) await applyHitResult("1B",batterName,true);
+        else if(r<25+batter[1]*0.15) await applyHitResult("2B",batterName,true);
         else await applyHitResult(Math.random()<.5?"FO":"GO",batterName,true);
         if(G.outs>=3||checkWalkoff())return; if(newBatterMsg())continue; else return;
       }else if(diff<=foulW){
