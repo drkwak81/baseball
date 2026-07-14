@@ -132,6 +132,20 @@
   .ext3{position:absolute;left:-1.5px;top:-46%;width:3px;height:46%;
     background:linear-gradient(to top,rgba(255,255,255,.65),transparent);}
 
+  .track{position:absolute;top:calc(15% + 15px);left:0;right:0;height:11px;
+    background:linear-gradient(180deg,#8a5f35,#75512c);box-shadow:inset 0 -2px 3px rgba(0,0,0,.25);}
+  .mow{position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none;
+    background:repeating-radial-gradient(circle at 50% 118%, rgba(255,255,255,.028) 0 36px, rgba(0,0,0,.035) 36px 72px);}
+  .field::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none;z-index:6;
+    box-shadow:inset 0 0 70px 18px rgba(0,0,0,.45);}
+  @keyframes crowdtwinkle{0%,100%{filter:brightness(1);}50%{filter:brightness(1.18);}}
+  .stands{animation:crowdtwinkle 2.6s ease-in-out infinite;}
+  @keyframes basepulse{0%,100%{box-shadow:0 0 6px 1px var(--glow-soft);}50%{box-shadow:0 0 16px 5px var(--glow-soft);}}
+  .base.runner{animation:basepulse 1.3s ease-in-out infinite;}
+  .btn-swing.bunting{background:linear-gradient(180deg,#6fd3ff,#3aa7e0);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.45), 0 4px 0 #1e6d99, 0 6px 18px rgba(58,167,224,.35);
+    font-size:19px;letter-spacing:2px;}
+
   .matchup{
     position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;
   }
@@ -149,7 +163,7 @@
     background:radial-gradient(circle at 35% 30%,#fff,#cfd6dd);box-shadow:0 0 8px rgba(255,255,255,.6);
     transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;}
   #hitFx{position:absolute;left:50%;top:70%;transform:translate(-50%,-50%);font-size:34px;font-weight:900;
-    letter-spacing:2px;opacity:0;pointer-events:none;text-shadow:0 2px 12px rgba(0,0,0,.6);white-space:nowrap;z-index:5;}
+    letter-spacing:2px;opacity:0;pointer-events:none;white-space:nowrap;z-index:5;-webkit-text-stroke:1.5px rgba(0,0,0,.35);text-shadow:0 2px 4px rgba(0,0,0,.5), 0 4px 18px rgba(0,0,0,.5);}
   @keyframes popfx{0%{opacity:0;transform:translate(-50%,-50%) scale(.4);}18%{opacity:1;transform:translate(-50%,-50%) scale(1.15);}70%{opacity:1;transform:translate(-50%,-58%) scale(1);}100%{opacity:0;transform:translate(-50%,-75%) scale(1);}}
   #hitFx.show{animation:popfx 1.15s ease-out forwards;}
 
@@ -171,17 +185,17 @@
   .btn:active{transform:scale(.96);}
   .btn-swing{
     width:100%;padding:20px 0;font-size:24px;letter-spacing:4px;
-    background:linear-gradient(180deg,#ffd23f,#ffb020);box-shadow:0 4px 0 #b57d0e,0 6px 18px rgba(255,178,32,.35);
+    background:linear-gradient(180deg,#ffd23f,#ffb020);box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 4px 0 #b57d0e, 0 6px 18px rgba(255,178,32,.35);
   }
   .btn-swing:disabled{filter:grayscale(.8);opacity:.5;box-shadow:none;}
   .pitch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-  .btn-pitch{padding:14px 0;font-size:14px;background:linear-gradient(180deg,#e8eef4,#c8d3dd);box-shadow:0 3px 0 #8fa1b0;}
+  .btn-pitch{padding:14px 0;font-size:14px;background:linear-gradient(180deg,#f2f6fa,#c8d3dd);box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 3px 0 #8fa1b0;}
   .btn-pitch small{display:block;font-size:9px;font-weight:600;color:#43525f;margin-top:2px;}
   .gauge-wrap{position:relative;height:34px;border-radius:17px;background:#141b23;border:1px solid var(--board-line);overflow:hidden;}
   .gauge-target{position:absolute;left:50%;top:0;bottom:0;width:18%;transform:translateX(-50%);background:rgba(76,217,100,.25);border-left:1px solid #4cd96466;border-right:1px solid #4cd96466;}
   .gauge-perfect{position:absolute;left:50%;top:0;bottom:0;width:6%;transform:translateX(-50%);background:rgba(255,210,63,.4);}
   #gmark{position:absolute;top:2px;bottom:2px;width:6px;border-radius:3px;background:#fff;box-shadow:0 0 8px #fff;left:0;}
-  .btn-throw{width:100%;padding:14px 0;font-size:18px;letter-spacing:2px;background:linear-gradient(180deg,#6fd3ff,#3aa7e0);box-shadow:0 4px 0 #1e6d99;}
+  .btn-throw{width:100%;padding:14px 0;font-size:18px;letter-spacing:2px;background:linear-gradient(180deg,#6fd3ff,#3aa7e0);box-shadow:inset 0 2px 0 rgba(255,255,255,.45), 0 4px 0 #1e6d99;}
   .hint{font-size:10.5px;color:var(--muted);text-align:center;}
 
   /* ---------- 오버레이 화면 ---------- */
@@ -191,7 +205,7 @@
   h1.logo{font-size:34px;font-weight:900;line-height:1.25;letter-spacing:1px;}
   h1.logo span{color:var(--glow);text-shadow:0 0 18px var(--glow-soft);}
   .sub{color:var(--muted);font-size:12.5px;margin:12px 0 26px;line-height:1.7;}
-  .btn-main{padding:16px 46px;font-size:18px;letter-spacing:3px;background:linear-gradient(180deg,#ffd23f,#ffb020);box-shadow:0 4px 0 #b57d0e;border-radius:14px;}
+  .btn-main{padding:16px 46px;font-size:18px;letter-spacing:3px;background:linear-gradient(180deg,#ffd23f,#ffb020);box-shadow:inset 0 2px 0 rgba(255,255,255,.5), 0 4px 0 #b57d0e;border-radius:14px;}
 
   .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;width:100%;max-width:400px;margin-top:14px;}
   .team-card{border-radius:12px;padding:12px 8px;font-weight:800;font-size:14px;color:#fff;border:2px solid transparent;cursor:pointer;line-height:1.4;text-shadow:0 1px 3px rgba(0,0,0,.45);transition:transform .08s;}
@@ -249,6 +263,8 @@
   <div class="field" id="field">
     <div class="stands"></div>
     <div class="wall"><span>125m</span><span>SUPER BATTLE PARK</span><span>125m</span></div>
+    <div class="track"></div>
+    <div class="mow"></div>
     <div class="lightpole lp1"></div><div class="lightpole lp2"></div>
     <div class="lamp la1"></div><div class="lamp la2"></div>
     <div class="night"></div>
@@ -284,7 +300,7 @@
   </div>
 
   <!-- 타이틀 -->
-  <div class="overlay" id="ovTitle">
+  <div class="overlay" id="ovTitle" style="background:radial-gradient(120% 85% at 50% -12%, #143047 0%, #0a141d 55%, #05080c 100%);">
     <div class="title-star">★ ★ ★</div>
     <h1 class="logo">프로야구<br><span>슈퍼배틀</span></h1>
     <p class="sub">KBO 10개 구단, 진짜 선수들과 함께!<br>타이밍에 맞춰 스윙하고, 멋진 공을 던져보자.</p>
@@ -319,7 +335,7 @@
     <h2 class="ov-title" id="listTitle"></h2>
     <div id="listBox" style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:8px;margin-top:12px;"></div>
     <div style="height:14px"></div>
-    <button class="btn" id="btnListCancel" style="padding:12px 40px;font-size:15px;background:linear-gradient(180deg,#e8eef4,#c8d3dd);box-shadow:0 3px 0 #8fa1b0;border-radius:12px;">취소</button>
+    <button class="btn" id="btnListCancel" style="padding:12px 40px;font-size:15px;background:linear-gradient(180deg,#f2f6fa,#c8d3dd);box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 3px 0 #8fa1b0;border-radius:12px;">취소</button>
   </div>
 
   <!-- 결과 -->
@@ -339,50 +355,50 @@
 const TEAMS=[
  {id:"lg",name:"LG 트윈스",short:"LG",color:"#C30452",
   bat:[["홍창기",88,55],["신민재",82,40],["김현수",85,72],["오스틴",80,90],["문보경",78,80],["박동원",68,84],["오지환",72,74],["문성주",80,55],["박해민",78,45]],
-  pit:[["임찬규",76,84,"선발"],["손주영",80,76,"선발"],["김진성",78,76,"중간"],["유영찬",86,74,"마무리"]],
-  bench:[["김범석",70,78],["구본혁",72,52],["이재원",66,70]]},
+  pit:[["임찬규",76,84,"선발"],["손주영",80,76,"선발"],["김진성",78,76,"중간"],["함덕주",76,74,"중간"],["박명근",74,70,"중간"],["유영찬",86,74,"마무리"]],
+  bench:[["김범석",70,78],["구본혁",72,52],["이재원",66,70],["이영빈",72,56],["김주성",68,60]]},
  {id:"doosan",name:"두산 베어스",short:"두산",color:"#131742",
   bat:[["정수빈",84,48],["케이브",78,80],["김재환",70,86],["양의지",82,78],["양석환",68,84],["강승호",72,70],["박준영",66,72],["김인태",70,58],["이유찬",72,46]],
-  pit:[["곽빈",84,70,"선발"],["최승용",74,74,"중간"],["이영하",80,70,"중간"],["김택연",88,72,"마무리"]],
-  bench:[["김민석",76,56],["조수행",78,40],["박계범",68,58]]},
+  pit:[["곽빈",84,70,"선발"],["최승용",74,74,"선발"],["이영하",80,70,"중간"],["홍건희",76,68,"중간"],["박치국",74,72,"중간"],["김택연",88,72,"마무리"]],
+  bench:[["김민석",76,56],["조수행",78,40],["박계범",68,58],["김기연",64,58],["전다민",72,50]]},
  {id:"kt",name:"KT 위즈",short:"KT",color:"#3d3d3d",
   bat:[["배정대",76,58],["로하스",78,90],["강백호",80,84],["문상철",70,82],["장성우",70,74],["황재균",72,70],["천성호",78,48],["김민혁",74,52],["안현민",84,84]],
-  pit:[["고영표",72,90,"선발"],["소형준",78,80,"중간"],["손동현",76,74,"중간"],["박영현",90,76,"마무리"]],
-  bench:[["조용호",78,42],["오윤석",68,56],["권동진",70,54]]},
+  pit:[["고영표",72,90,"선발"],["소형준",78,80,"선발"],["손동현",76,74,"중간"],["주권",74,78,"중간"],["김민수",74,70,"중간"],["박영현",90,76,"마무리"]],
+  bench:[["조용호",78,42],["오윤석",68,56],["권동진",70,54],["안치영",70,52],["강현우",64,66]]},
  {id:"ssg",name:"SSG 랜더스",short:"SSG",color:"#CE0E2D",
   bat:[["최지훈",80,54],["정준재",78,42],["최정",74,92],["에레디아",86,76],["한유섬",66,82],["고명준",68,78],["박성한",78,62],["이지영",72,44],["김성현",70,48]],
-  pit:[["김광현",80,78,"선발"],["앤더슨",84,72,"선발"],["노경은",74,80,"중간"],["조병현",88,70,"마무리"]],
-  bench:[["오태곤",70,72],["하재훈",72,66],["안상현",70,50]]},
+  pit:[["김광현",80,78,"선발"],["앤더슨",84,72,"선발"],["노경은",74,80,"중간"],["서진용",78,72,"중간"],["김민",74,70,"중간"],["조병현",88,70,"마무리"]],
+  bench:[["오태곤",70,72],["하재훈",72,66],["안상현",70,50],["전의산",64,80],["최준우",70,52]]},
  {id:"kiwoom",name:"키움 히어로즈",short:"키움",color:"#59060D",
   bat:[["이주형",80,70],["송성문",84,78],["최주환",72,74],["김건희",68,80],["임지열",66,74],["김태진",74,50],["박수종",76,44],["김동헌",66,60],["어준서",68,46]],
-  pit:[["안우진",94,76,"선발"],["하영민",74,78,"선발"],["김재웅",76,70,"중간"],["주승우",80,70,"마무리"]],
-  bench:[["변상권",72,62],["이재상",70,52],["김웅빈",64,72]]},
+  pit:[["안우진",94,76,"선발"],["하영민",74,78,"선발"],["김재웅",76,70,"중간"],["박승주",72,70,"중간"],["원종현",74,72,"중간"],["주승우",80,70,"마무리"]],
+  bench:[["변상권",72,62],["이재상",70,52],["김웅빈",64,72],["이원석",70,66],["임병욱",70,64]]},
  {id:"hanwha",name:"한화 이글스",short:"한화",color:"#FC4E00",
   bat:[["황영묵",80,50],["문현빈",82,66],["노시환",74,90],["채은성",76,80],["플로리얼",74,82],["박찬호",78,56],["최재훈",72,46],["이진영",70,66],["심우준",72,50]],
-  pit:[["류현진",74,92,"선발"],["폰세",92,80,"선발"],["주현상",80,76,"중간"],["김서현",92,64,"마무리"]],
-  bench:[["김태연",72,66],["임종찬",68,64],["이도윤",70,48]]},
+  pit:[["류현진",74,92,"선발"],["폰세",92,80,"선발"],["주현상",80,76,"중간"],["박상원",76,70,"중간"],["김범수",74,68,"중간"],["김서현",92,64,"마무리"]],
+  bench:[["김태연",72,66],["임종찬",68,64],["이도윤",70,48],["최인호",74,54],["하주석",70,60]]},
  {id:"samsung",name:"삼성 라이온즈",short:"삼성",color:"#074CA1",
   bat:[["김지찬",84,40],["구자욱",88,82],["김영웅",70,86],["디아즈",72,90],["강민호",74,76],["이재현",72,72],["류지혁",74,54],["김헌곤",72,56],["김성윤",78,44]],
-  pit:[["원태인",80,82,"선발"],["후라도",82,84,"선발"],["이승현",76,72,"중간"],["김재윤",78,72,"마무리"]],
-  bench:[["박병호",58,90],["이성규",62,84],["김재혁",68,62]]},
+  pit:[["원태인",80,82,"선발"],["후라도",82,84,"선발"],["이승현",76,72,"중간"],["임창민",74,74,"중간"],["최지광",74,68,"중간"],["김재윤",78,72,"마무리"]],
+  bench:[["박병호",58,90],["이성규",62,84],["김재혁",68,62],["전병우",66,68],["안주형",72,48]]},
  {id:"lotte",name:"롯데 자이언츠",short:"롯데",color:"#8B1F41",
   bat:[["황성빈",82,46],["윤동희",80,70],["레이예스",86,80],["전준우",78,76],["나승엽",78,72],["손호영",76,74],["유강남",66,70],["고승민",76,64],["박승욱",70,52]],
-  pit:[["박세웅",78,78,"선발"],["감보아",84,70,"선발"],["구승민",76,70,"중간"],["김원중",84,70,"마무리"]],
-  bench:[["정훈",74,64],["노진혁",68,66],["장두성",78,38]]},
+  pit:[["박세웅",78,78,"선발"],["감보아",84,70,"선발"],["구승민",76,70,"중간"],["정철원",76,70,"중간"],["최준용",78,68,"중간"],["김원중",84,70,"마무리"]],
+  bench:[["정훈",74,64],["노진혁",68,66],["장두성",78,38],["김민성",70,62],["이정훈",72,58]]},
  {id:"kia",name:"KIA 타이거즈",short:"KIA",color:"#EA0029",
   bat:[["김도영",88,92],["최원준",78,58],["나성범",78,84],["최형우",80,80],["위즈덤",66,88],["김선빈",84,48],["김태군",68,54],["박정우",74,48],["김규성",70,44]],
-  pit:[["양현종",74,86,"선발"],["네일",84,80,"선발"],["전상현",78,74,"중간"],["정해영",82,72,"마무리"]],
-  bench:[["서건창",78,48],["이우성",72,68],["이창진",74,56]]},
+  pit:[["양현종",74,86,"선발"],["네일",84,80,"선발"],["전상현",78,74,"중간"],["곽도규",80,66,"중간"],["최지민",76,68,"중간"],["정해영",82,72,"마무리"]],
+  bench:[["서건창",78,48],["이우성",72,68],["이창진",74,56],["박민",66,72],["오선우",68,66]]},
  {id:"nc",name:"NC 다이노스",short:"NC",color:"#315288",
   bat:[["박민우",84,56],["박건우",84,74],["데이비슨",64,94],["권희동",72,74],["김형준",62,82],["김주원",74,68],["서호철",74,60],["최정원",74,46],["김성욱",66,68]],
-  pit:[["구창모",86,72,"선발"],["신민혁",72,80,"선발"],["김영규",76,72,"중간"],["김진호",80,72,"마무리"]],
-  bench:[["손아섭",82,60],["오영수",66,72],["천재환",68,58]]}
+  pit:[["구창모",86,72,"선발"],["신민혁",72,80,"선발"],["김영규",76,72,"중간"],["임정호",74,70,"중간"],["류진욱",78,68,"중간"],["김진호",80,72,"마무리"]],
+  bench:[["손아섭",82,60],["오영수",66,72],["천재환",68,58],["박세혁",68,60],["도태훈",70,54]]}
 ];
 const PITCH_TYPES=[
- {n:"직구",eng:"FAST",spd:.82,bonus:6},
- {n:"슬라이더",eng:"SLD",spd:1.0,bonus:10},
- {n:"커브",eng:"CRV",spd:1.22,bonus:12},
- {n:"포크",eng:"FRK",spd:1.1,bonus:14}
+ {n:"직구",eng:"FAST",spd:.82,bonus:6,ico:"🔥"},
+ {n:"슬라이더",eng:"SLD",spd:1.0,bonus:10,ico:"⚡"},
+ {n:"커브",eng:"CRV",spd:1.22,bonus:12,ico:"🌙"},
+ {n:"포크",eng:"FRK",spd:1.1,bonus:14,ico:"🎯"}
 ];
 
 /* ================= 선수 캐릭터 아바타 =================
@@ -594,14 +610,16 @@ const rand=(a,b)=>a+Math.random()*(b-a);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ----- 투수 체력 시스템 ----- */
-const stamMax=role=>role==="선발"?130:55;   // 선발≈4이닝, 중간/마무리≈1~2이닝
+const INNING_STAM=46;                                    // 1이닝 분량의 체력
+const starterLimit=()=>({3:2,5:3,7:5,9:6}[G.maxInning]||3); // 경기 이닝별 선발 한계이닝
+const stamMax=role=>role==="선발"?starterLimit()*INNING_STAM:INNING_STAM; // 구원은 1이닝 한계
 function teamOf(key){ return key==="home"?G.myTeam:G.cpuTeam; }
 function pitcherRatio(key){
   const st=G.staff[key], p=teamOf(key).pit[st.cur];
   return Math.max(0,st.stam[st.cur])/stamMax(p[3]);
 }
-function effStuff(key){ const p=teamOf(key).pit[G.staff[key].cur]; return p[1]*(0.55+0.45*pitcherRatio(key)); }
-function effCtl(key){ const p=teamOf(key).pit[G.staff[key].cur]; return p[2]*(0.7+0.3*pitcherRatio(key)); }
+function effStuff(key){ const p=teamOf(key).pit[G.staff[key].cur]; return p[1]*(0.45+0.55*pitcherRatio(key)); }
+function effCtl(key){ const p=teamOf(key).pit[G.staff[key].cur]; return p[2]*(0.6+0.4*pitcherRatio(key)); }
 function drain(key,amt){ const st=G.staff[key]; st.stam[st.cur]=Math.max(0,st.stam[st.cur]-amt); }
 function freshList(key){ // 아직 안 쓴 투수들 (현재 투수 제외)
   const st=G.staff[key];
@@ -691,6 +709,32 @@ function advance(bases,batterName){
   }
   if(runs>0) addRun(runs);
   return runs;
+}
+function advanceAll(n){        // 타자를 베이스에 놓지 않고 주자만 진루 (희생번트용)
+  let runs=0;
+  for(let i=2;i>=0;i--){
+    if(G.bases[i]){ const to=i+n; if(to>=3){runs++; G.bases[i]=null;} else {G.bases[to]=G.bases[i]; G.bases[i]=null;} }
+  }
+  if(runs)addRun(runs);
+  return runs;
+}
+async function tryStealPlayer(){   // 내 팀 도루 시도
+  let from=-1;
+  if(G.bases[0]&&!G.bases[1])from=0; else if(G.bases[1]&&!G.bases[2])from=1;
+  if(from<0)return;
+  const runner=G.bases[from], toBase=from===0?"2":"3";
+  const prob=from===0?0.68:0.45;   // 3루 도루는 어렵다
+  say(`<b>${runner}</b>, 스타트 끊었다!!`); sfxWhoosh(); await sleep(750);
+  if(Math.random()<prob){
+    G.bases[from+1]=runner; G.bases[from]=null;
+    fx("도루 성공!","#4cd964"); sfxCrowd(.9,.8); vib(60);
+    say(`<b>${runner}</b>, ${toBase}루 도루 성공!! 헤드퍼스트 슬라이딩!`);
+  }else{
+    G.bases[from]=null; G.outs++;
+    fx("도루 실패","#ff5a5a"); sfxOut();
+    say(`포수의 레이저 송구! <b>${runner}</b>, ${toBase}루에서 태그 아웃…`);
+  }
+  updateBoard(); await sleep(1200);
 }
 function walk(batterName){
   let runs=0;
@@ -815,62 +859,105 @@ function setAction(html){ $("actionArea").innerHTML=html; }
 async function playerAtBat(){
   G.balls=0;G.strikes=0; updateBoard();
   say(`타석에 <b>${currentBatter()[0]}</b>! 상대 투수는 ${currentPitcher()[0]}. 공이 링에 닿는 순간 <b>스윙</b>!`);
+  let buntMode=false;
   while(!G.over){
-    // CPU 벤치의 투수 교체 판단
     const subName=cpuMaybeChange();
     if(subName){ updateBoard(); say(`${G.cpuTeam.short} 벤치가 움직입니다. 투수 교체, <b>${subName}</b> 등판!`); await sleep(1500); }
-    const batter=currentBatter(), pitcher=currentPitcher();   // 매 투구마다 최신 타자/투수
+    const batter=currentBatter(), pitcher=currentPitcher();
     updateBoard();
-    // 스윙 버튼 + 대타 버튼 준비
     const benchLeft=G.benchUsed.some(x=>!x);
-    setAction(`<button class="btn btn-swing" id="btnSwing" disabled>스 윙 !</button>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <div class="hint" style="flex:1;text-align:left;">공이 점선 링에 닿는 순간 누르자!</div>
-        <button class="btn-ghost" id="btnPH" ${benchLeft?"":"disabled"} style="width:auto;padding:8px 14px;">대타</button>
+    const canSteal=(G.bases[0]&&!G.bases[1])||(G.bases[1]&&!G.bases[2]);
+    setAction(`<button class="btn btn-swing ${buntMode?"bunting":""}" id="btnSwing" disabled>${buntMode?"번트 콘택트!":"스 윙 !"}</button>
+      <div class="hint">${buntMode?"번트 자세! 링에 오면 가볍게 콘택트 (2S 뒤 파울은 삼진!)":"공이 점선 링에 닿는 순간 누르자!"}</div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn-ghost" id="btnBunt" style="flex:1;">${buntMode?"번트 취소":"번트"}</button>
+        <button class="btn-ghost" id="btnSteal" style="flex:1;" ${canSteal?"":"disabled"}>도루</button>
+        <button class="btn-ghost" id="btnPH" style="flex:1;" ${benchLeft?"":"disabled"}>대타</button>
       </div>`);
-    let pinchOpen=null, locked=false;
-    $("btnPH").onpointerdown=()=>{ if(locked||!benchLeft)return; if(!pinchOpen)pinchOpen=openPinchHit(); };
+    let preAction=null, locked=false;
+    $("btnPH").onpointerdown=()=>{ if(locked||!benchLeft||preAction)return; preAction=openPinchHit(); };
+    $("btnSteal").onpointerdown=()=>{ if(locked||!canSteal||preAction)return; preAction=tryStealPlayer(); };
+    $("btnBunt").onpointerdown=()=>{ if(locked||preAction)return; buntMode=!buntMode;
+      $("btnSwing").textContent=buntMode?"번트 콘택트!":"스 윙 !";
+      $("btnSwing").classList.toggle("bunting",buntMode);
+      $("btnBunt").textContent=buntMode?"번트 취소":"번트";
+      say(buntMode?`<b>${batter[0]}</b>, 번트 자세를 잡았다!`:`번트 취소, 강공으로 간다!`); };
     await sleep(rand(500,1100));
-    locked=true; $("btnPH").disabled=true;          // 투구 시작 → 대타 버튼 잠금 먼저
-    if(pinchOpen){ await pinchOpen; continue; }     // 대타 교체 후 새 타자로 다시
+    locked=true; ["btnPH","btnSteal","btnBunt"].forEach(id=>$(id).disabled=true);
+    if(preAction){ await preAction; if(G.outs>=3)return; continue; }
     const pt=PITCH_TYPES[Math.floor(Math.random()*PITCH_TYPES.length)];
     const eS=effStuff("away"), eC=effCtl("away");
-    const isStrikeZone=Math.random()<0.4+eC*0.003;   // 제구 좋으면(체력 있으면) 스트라이크↑
+    const isStrikeZone=Math.random()<0.4+eC*0.003;
     const base=1000-eS*2.2;                          // 지친 투수의 공은 느리다
     const duration=Math.max(600, base*pt.spd*rand(.95,1.05));
-    drain("away",2.6);
+    drain("away",3);
     showSpeed(duration,pt.n);
-    say(`${pitcher[0]}, ${pt.n} 승부! <b>지금이야, 타이밍!</b>`);
+    say(`${pitcher[0]}, ${pt.n} 승부! <b>${buntMode?"번트 타이밍!":"지금이야, 타이밍!"}</b>`);
     const btn=$("btnSwing"); btn.disabled=false;
     let swung=false, swingTime=0;
     const t0=performance.now();
-    btn.onpointerdown=()=>{ if(swung)return; swung=true; swingTime=performance.now()-t0; btn.disabled=true; swingAnim(); };
+    btn.onpointerdown=()=>{ if(swung)return; swung=true; swingTime=performance.now()-t0; btn.disabled=true; if(!buntMode)swingAnim(); };
     await animatePitch(duration);
-    await sleep(140);                     // 늦은 스윙도 잡아주기
+    await sleep(140);
     btn.disabled=true;
     hideBall();
     const batterName=batter[0];
     if(!swung){
       if(isStrikeZone){ G.strikes++; sfxStrike(); fx("스트라이크","#ffb020");
-        say(`꼼짝 못 하고 지켜봤다… <b>스트라이크!</b> (${G.balls}B ${G.strikes+0}S)`); }
+        say(`꼼짝 못 하고 지켜봤다… <b>스트라이크!</b> (${G.balls}B ${G.strikes}S)`); }
       else{ G.balls++; sfxBall(); fx("볼","#6fd3ff");
         say(`잘 골랐어! <b>볼.</b> (${G.balls}B ${G.strikes}S)`); }
+    }else if(buntMode){
+      buntMode=false;
+      const diff=Math.abs(swingTime-duration);
+      if(diff<=175){                                 // 번트는 콘택트가 쉽다
+        const runners=G.bases.some(x=>x);
+        const r=Math.random()*100;
+        if(r<10+batter[1]*0.12){                     // 기습 번트 안타!
+          sfxCrack(.1); sfxCrowd(.8,.8); fx("기습번트!","#4cd964"); flyBall("GO"); vib(50);
+          const runs=advance(1,batterName);
+          G.hits.home++; G.myHits[batterName]=(G.myHits[batterName]||0)+1;
+          say(`<b>${batterName}</b>, 3루수 앞 절묘한 기습번트 안타!!`+(runs?` ${runs}점 추가!`:""));
+          G.balls=0;G.strikes=0;G.batIdx.home++; updateBoard(); await sleep(1300);
+          if(checkWalkoff())return; if(newBatterMsg())continue; else return;
+        }else if(runners){                           // 희생번트 성공
+          G.outs++; const runs=advanceAll(1);
+          sfxCrack(.08); sfxOut(); fx("희생번트","#6fd3ff"); flyBall("GO"); vib(30);
+          say(`<b>${batterName}</b>의 희생번트 성공! 주자를 한 베이스씩 보냈다.`+(runs?` 스퀴즈 성공, ${runs}점!!`:""));
+          G.balls=0;G.strikes=0;G.batIdx.home++; updateBoard(); await sleep(1300);
+          if(G.outs>=3)return; if(checkWalkoff())return; if(newBatterMsg())continue; else return;
+        }else{                                       // 주자 없는 번트 → 잡힌다
+          await applyHitResult("GO",batterName,true);
+          if(G.outs>=3)return; if(newBatterMsg())continue; else return;
+        }
+      }else if(diff<=290){                           // 번트 파울 (2스트라이크면 삼진!)
+        if(G.strikes>=2){
+          sfxFoul(); say(`번트가 파울… 2스트라이크 뒤 번트 파울은 <b>삼진</b>이야!`); await sleep(800);
+          await applyHitResult("K",batterName,true);
+          if(G.outs>=3)return; if(newBatterMsg())continue; else return;
+        }
+        G.strikes++; sfxFoul(); fx("파울","#e8e4da");
+        say(`번트가 파울이 됐다. (${G.balls}B ${G.strikes}S)`);
+      }else{
+        G.strikes++; sfxSwish(); fx("헛스윙!","#ff5a5a");
+        say(`번트 헛스윙! (${G.balls}B ${G.strikes}S)`);
+      }
     }else{
       const diff=Math.abs(swingTime-duration);
-      const perfectW=38+batter[1]*0.26;   // 퍼펙트 판정 (약 55~62ms)
-      const goodW=92+batter[1]*0.38;
+      const perfectW=42+batter[1]*0.30;   // 퍼펙트 판정 (약 60~68ms)
+      const goodW=95+batter[1]*0.38;
       const foulW=165;
       if(diff<=perfectW){
-        const r=Math.random()*100, hrCut=batter[2]*0.11+(isStrikeZone?2:0);   // 거포 홈런 ~12%
+        const r=Math.random()*100, hrCut=batter[2]*0.20+(isStrikeZone?2:0);   // 거포 홈런 ~20%
         if(r<hrCut) await applyHitResult("HR",batterName,true);
-        else if(r<hrCut+14) await applyHitResult("2B",batterName,true);
-        else if(r<hrCut+14+36) await applyHitResult("1B",batterName,true);
-        else await applyHitResult(Math.random()<.6?"FO":"GO",batterName,true);   // 정타도 야수 정면이면 아웃!
+        else if(r<hrCut+15) await applyHitResult("2B",batterName,true);
+        else if(r<hrCut+15+34) await applyHitResult("1B",batterName,true);
+        else await applyHitResult(Math.random()<.6?"FO":"GO",batterName,true);   // 정타도 잡힐 수 있다
         if(G.outs>=3||checkWalkoff())return; if(newBatterMsg())continue; else return;
       }else if(diff<=goodW){
         const r=Math.random()*100;
-        if(r<20+batter[1]*0.15) await applyHitResult("1B",batterName,true);
-        else if(r<25+batter[1]*0.15) await applyHitResult("2B",batterName,true);
+        if(r<26+batter[1]*0.10) await applyHitResult("1B",batterName,true);
+        else if(r<32+batter[1]*0.10) await applyHitResult("2B",batterName,true);
         else await applyHitResult(Math.random()<.5?"FO":"GO",batterName,true);
         if(G.outs>=3||checkWalkoff())return; if(newBatterMsg())continue; else return;
       }else if(diff<=foulW){
@@ -939,11 +1026,27 @@ async function playerPitching(){
   while(!G.over){
     const cpuBat=currentBatter();          // 매 투구마다 최신 타자
     updateBoard();
+    // CPU 도루 시도 (1루 주자, 2루 비었을 때 가끔)
+    if(G.bases[0]&&!G.bases[1]&&Math.random()<0.10){
+      const runner=G.bases[0];
+      say(`앗! <b>${runner}</b>가 스타트를 끊었다!`); sfxWhoosh(); await sleep(750);
+      if(Math.random()<0.60){
+        G.bases[1]=runner; G.bases[0]=null;
+        fx("도루 허용","#ffb020"); sfxCrowd(.5,.6);
+        say(`<b>${runner}</b>, 2루 도루 성공… 실점 위기다!`);
+      }else{
+        G.bases[0]=null; G.outs++;
+        fx("도루 저지!","#4cd964"); sfxOut(); vib(50);
+        say(`포수의 완벽한 송구!! <b>${runner}</b> 도루 실패!`);
+        if(G.outs>=3){ updateBoard(); await sleep(1000); return; }
+      }
+      updateBoard(); await sleep(1100);
+    }
     // 1) 구종 선택 (또는 투수 교체)
     const hasFresh=freshList("home").length>0;
     const sel=await new Promise(res=>{
       setAction(`<div class="pitch-grid">${PITCH_TYPES.map((p,i)=>
-        `<button class="btn btn-pitch" data-i="${i}">${p.n}<small>${p.eng}</small></button>`).join("")}</div>
+        `<button class="btn btn-pitch" data-i="${i}">${p.ico} ${p.n}<small>${p.eng}</small></button>`).join("")}</div>
         <div style="display:flex;gap:8px;align-items:center;">
           <div class="hint" style="flex:1;text-align:left;">직구는 강하고, 변화구는 헛스윙 유도!</div>
           <button class="btn-ghost" id="btnChgP" ${hasFresh?"":"disabled"} style="width:auto;padding:8px 14px;">투수 교체</button>
@@ -957,7 +1060,7 @@ async function playerPitching(){
     const acc=Math.max(0,Math.min(100,await runGauge()));
     const pitcher=currentPitcher();
     const eS=effStuff("home");
-    drain("home",2.6);
+    drain("home",3);
     say(`${pt.n} 투구! ${acc>=88?"<b>완벽한 코스!</b>":acc>=60?"좋은 공!":acc>=30?"조금 몰렸다…":"어이쿠, 크게 빠졌다!"}`);
     showSpeed(700*pt.spd,pt.n);
     await animatePitch(700*pt.spd); hideBall();
@@ -970,19 +1073,19 @@ async function playerPitching(){
       say(`크게 빠지는 공, <b>볼.</b> (${G.balls}B ${G.strikes}S)`); }
     else{
       const margin=Q-skill+rand(-22,22);
-      if(margin>6){ G.strikes++; fx(Math.random()<.5?"헛스윙!":"스트라이크!","#ffb020"); sfxStrike(); vib(30);
+      if(margin>14){ G.strikes++; fx(Math.random()<.5?"헛스윙!":"스트라이크!","#ffb020"); sfxStrike(); vib(30);
         say(`<b>${batterName}</b>, 방망이가 헛돌았다! (${G.balls}B ${G.strikes}S)`); }
-      else if(margin>-22){
-        if(Math.random()<.35&&G.strikes<2){ G.strikes++; sfxFoul(); fx("파울","#e8e4da");
+      else if(margin>-12){
+        if(Math.random()<.30&&G.strikes<2){ G.strikes++; sfxFoul(); fx("파울","#e8e4da");
           say(`${batterName}, 간신히 커트! 파울. (${G.balls}B ${G.strikes}S)`); }
         else{ await applyHitResult(Math.random()<.55?"GO":"FO",batterName,false);
           if(G.outs>=3)return; sayCpuNext(); continue; }
       }
       else{
-        const r=Math.random()*100, hrCut=cpuBat[2]*0.18;
+        const r=Math.random()*100, hrCut=cpuBat[2]*0.24;
         if(r<hrCut) await applyHitResult("HR",batterName,false);
-        else if(r<hrCut+18) await applyHitResult("2B",batterName,false);
-        else if(r<hrCut+18+52) await applyHitResult("1B",batterName,false);
+        else if(r<hrCut+20) await applyHitResult("2B",batterName,false);
+        else if(r<hrCut+20+52) await applyHitResult("1B",batterName,false);
         else await applyHitResult("GO",batterName,false);   // 잘 맞아도 호수비!
         if(G.outs>=3)return; sayCpuNext(); continue;
       }
@@ -1047,7 +1150,7 @@ async function halfBanner(){
   $("halfTitle").textContent=`${G.inning}회${G.top?"초":"말"}`;
   $("halfSub").innerHTML=G.top
     ?`<b style="color:#6fd3ff">수비 시간!</b> ${G.cpuTeam.short} 타선을 막아라.<br>구종을 고르고, 게이지를 가운데에 맞춰 던지자.<br>투수가 지치면(체력 게이지 확인!) <b>투수 교체</b>를 눌러 새 투수를 올리자.`
-    :`<b style="color:#ffd23f">공격 시간!</b> ${G.myTeam.short}의 반격!<br>공이 점선 링에 닿는 순간 스윙 버튼을 누르자.<br>중요한 순간엔 <b>대타</b> 카드도 있어!<br>현재 스코어 ${sum(G.score.away)} : ${sum(G.score.home)}`;
+    :`<b style="color:#ffd23f">공격 시간!</b> ${G.myTeam.short}의 반격!<br>공이 점선 링에 닿는 순간 스윙 버튼을 누르자.<br>번트·도루·대타 작전을 자유롭게 써보자!<br>현재 스코어 ${sum(G.score.away)} : ${sum(G.score.home)}`;
   $("ovHalf").classList.remove("hidden");
   await new Promise(res=>{ $("btnHalfGo").onclick=()=>{ $("ovHalf").classList.add("hidden");
     if(G.top)sfxDrums(); else sfxCharge();
