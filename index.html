@@ -235,12 +235,17 @@
   .mvp-card{background:#10161d;border:1px solid var(--board-line);border-radius:14px;padding:14px 22px;margin:14px 0 22px;line-height:1.7;font-size:13px;}
   .mvp-card b{color:var(--glow);font-size:17px;}
   .foot{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:9.5px;color:#546575;padding:0 20px;line-height:1.6;}
-  #mute{position:absolute;top:10px;right:12px;z-index:30;background:#10161d;border:1px solid var(--board-line);color:var(--muted);border-radius:9px;padding:6px 10px;font-size:12px;font-family:inherit;}
+  #setBtns{position:absolute;top:10px;right:12px;z-index:30;display:flex;gap:6px;}
+  #setBtns button{background:#10161d;border:1px solid var(--board-line);color:var(--muted);border-radius:9px;padding:6px 10px;font-size:12px;font-family:inherit;}
+  #setBtns button.off{opacity:.4;}
+  .record-line{margin:10px 0 2px;font-size:12px;color:var(--glow);font-family:ui-monospace,monospace;letter-spacing:1px;min-height:16px;}
+  .help-sec{background:#10161d;border:1px solid var(--board-line);border-radius:12px;padding:12px 16px;margin:6px 0;text-align:left;font-size:12.5px;line-height:1.75;width:100%;max-width:380px;}
+  .help-sec b{color:var(--glow);}
 </style>
 </head>
 <body>
 <div id="app">
-  <button id="mute">🔊</button>
+  <div id="setBtns"><button id="mute">🔊</button><button id="vibBtn">📳</button></div>
 
   <!-- 전광판 -->
   <div class="scoreboard">
@@ -305,8 +310,28 @@
     <div class="title-star">★ ★ ★</div>
     <h1 class="logo">프로야구<br><span>슈퍼배틀</span></h1>
     <p class="sub">KBO 10개 구단, 진짜 선수들과 함께!<br>타이밍에 맞춰 스윙하고, 멋진 공을 던져보자.</p>
+    <div class="record-line" id="recLine"></div>
     <button class="btn btn-main" id="btnStart">경기 시작</button>
+    <div style="height:12px"></div>
+    <button class="btn-ghost" id="btnHelp" style="padding:10px 30px;font-size:13px;">게임 방법</button>
     <div class="foot">선수 명단은 2025시즌 기준 팬 게임입니다.</div>
+  </div>
+
+  <!-- 게임 방법 -->
+  <div class="overlay hidden" id="ovHelp" style="z-index:26;justify-content:flex-start;padding-top:40px;">
+    <h2 class="ov-title">게임 방법 ⚾</h2>
+    <div class="help-sec"><b>🏏 공격 (타격)</b><br>
+      공이 점점 커지며 날아와 점선 링에 닿는 순간 <b>스윙!</b>을 누르자.
+      타이밍이 완벽할수록 장타 확률이 올라가. 나쁜 공은 참으면 볼이 되고, 볼 4개면 걸어 나간다!</div>
+    <div class="help-sec"><b>🧤 수비 (투구)</b><br>
+      구종(🔥직구 ⚡슬라이더 🌙커브 🎯포크)을 고르고, 움직이는 게이지를 <b>가운데 노란 구역</b>에 멈추면 최고의 공.
+      투수 체력이 닳으면 구속과 구위가 떨어지니 <b>투수 교체</b>로 새 투수를 올리자. 내려간 투수는 못 돌아와!</div>
+    <div class="help-sec"><b>🎯 작전</b><br>
+      <b>번트</b>: 콘택트가 쉬워 주자를 보내기 좋아. 단, 2스트라이크 뒤 번트 파울은 삼진!<br>
+      <b>도루</b>: 2루 도루 성공률 68%, 3루는 45%의 도박.<br>
+      <b>대타</b>: 승부처에 벤치의 거포를 투입하자. 한 번 쓰면 끝!</div>
+    <div style="height:10px"></div>
+    <button class="btn btn-main" id="btnHelpClose">알겠어!</button>
   </div>
 
   <!-- 팀 선택 -->
@@ -402,6 +427,23 @@ const TEAMS=[
   pit:[["구창모",86,72,"선발"],["신민혁",72,80,"선발"],["김영규",76,72,"중간"],["임정호",74,70,"중간"],["류진욱",78,68,"중간"],["김진호",80,72,"마무리"]],
   bench:[["손아섭",82,60],["오영수",66,72],["천재환",68,58],["박세혁",68,60],["도태훈",70,54]]}
 ];
+/* --- 저장소 (전적/설정 영구 저장, 실패해도 게임엔 지장 없음) --- */
+const store={
+  get(k,d){ try{const v=localStorage.getItem("kbo_"+k); return v==null?d:JSON.parse(v);}catch(e){return d;} },
+  set(k,v){ try{localStorage.setItem("kbo_"+k,JSON.stringify(v));}catch(e){} }
+};
+const SET={snd:store.get("snd",true), vib:store.get("vib",true)};
+/* --- 중계 멘트 라이브러리 --- */
+const LINES={
+ HR:["담장을 훌쩍 넘기는 초대형 홈런!!","쭉쭉 뻗습니다… 넘어갔어요!! 홈런!!","밤하늘에 그리는 환상적인 아치!! 홈런!","전광판을 직격하는 대형 홈런!!"],
+ "2B":["펜스를 직격하는 큼지막한 2루타!","좌중간을 완전히 가르는 2루타!","라인 타고 흐르는 총알 같은 2루타!"],
+ "1B":["야수 사이를 꿰뚫는 깨끗한 안타!","빗맞았지만 절묘하게 떨어지는 안타!","중전 안타! 타구가 살아있네요!","3유간을 빠져나가는 기술적인 안타!"],
+ BB:["침착하게 골라 나가는 볼넷.","풀카운트 승부 끝에 볼넷!","유인구에 속지 않고 볼넷을 얻어냅니다."],
+ K:["헛스윙 삼진으로 물러납니다.","꼼짝 못 하고 삼진!","방망이가 허공을 갈랐어요, 삼진!"],
+ FO:["의 타구, 야수 글러브에 쏙! 뜬공 아웃.",", 잘 맞았지만 중견수 정면! 아웃.","의 타구, 높이 떴지만… 잡혔습니다."],
+ GO:["땅볼로 잡히고 맙니다.","유격수 앞 땅볼, 가볍게 아웃.","빗맞은 땅볼로 물러납니다."]
+};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
 const DIFFS={   // 난이도: 판정폭/안타율/상대구속/상대타격 보정
  easy:  {label:"쉬움",  win:1.30, hit:1.15, pspd:1.12, cpu:-7, cHR:0.80},
  normal:{label:"보통",  win:1.00, hit:1.00, pspd:1.00, cpu: 0, cHR:1.00},
@@ -466,7 +508,7 @@ function avatarSVG(name,color,size){
 }
 
 /* ================= 사운드 ================= */
-let audioCtx=null, muted=false;
+let audioCtx=null, muted=!SET.snd;
 function ac(){
   if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} }
   if(audioCtx&&audioCtx.state==="suspended"){ try{audioCtx.resume();}catch(e){} }   // 모바일: 잠긴 오디오 깨우기
@@ -545,7 +587,7 @@ function sfxLose(){ tone(N.E4,.3,"triangle",.25); tone(N.C4,.55,"triangle",.25,n
 function sfxDraw(){ tone(N.G4,.25,"triangle",.26); tone(N.G4,.3,"triangle",.26,null,.3); }
 function crack(){ sfxCrack(.5); }
 function cheer(){ sfxCrowd(1.2,1.5); }
-function vib(p){ if(navigator.vibrate) try{navigator.vibrate(p);}catch(e){} }
+function vib(p){ if(SET.vib&&navigator.vibrate) try{navigator.vibrate(p);}catch(e){} }
 
 /* --- 필드 위 전신 스프라이트 (타자=뒷모습 타격자세, 투수=정면 투구자세) --- */
 function spriteSVG(name,color,mode){
@@ -598,6 +640,23 @@ function spriteSVG(name,color,mode){
 }
 function swingAnim(){ const s=$("spBatter"); s.classList.remove("swing"); void s.offsetWidth;
   s.classList.add("swing"); setTimeout(()=>s.classList.remove("swing"),260); }
+
+/* --- 관중 웅성거림 앰비언스 --- */
+let ambientNode=null;
+function ambient(on){
+  const c=ac(); if(!c)return;
+  if(on&&!ambientNode&&!muted){
+    try{
+      const len=c.sampleRate*2, buf=c.createBuffer(1,len,c.sampleRate), d=buf.getChannelData(0);
+      for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+      const s=c.createBufferSource(); s.buffer=buf; s.loop=true;
+      const f=c.createBiquadFilter(); f.type="bandpass"; f.frequency.value=950; f.Q.value=.3;
+      const g=c.createGain(); g.gain.value=.026;
+      s.connect(f); f.connect(g); g.connect(c.destination); s.start();
+      ambientNode={s};
+    }catch(e){}
+  }else if(!on&&ambientNode){ try{ambientNode.s.stop();}catch(e){} ambientNode=null; }
+}
 
 /* ================= 상태 ================= */
 const $=id=>document.getElementById(id);
@@ -823,37 +882,39 @@ function homerunConfetti(){
 /* ================= 타격 결과 처리 (공통) ================= */
 async function applyHitResult(result,batterName,isPlayer){
   const key=battingKey();
-  const before=(G.score[key][G.inning-1]||0);
+  const sum=a=>a.reduce((x,y)=>x+(y||0),0);
+  const ledBefore=sum(G.score[key])>sum(G.score[key==="home"?"away":"home"]);
   let runs=0, msg="";
   switch(result){
     case "HR":
       runs=advance(4,batterName); sfxHomerun(); flyBall("HR"); vib([60,40,120]); homerunConfetti();
       fx("홈런!!!","#ffd23f");
-      msg=`<b>${batterName}</b>, 담장을 훌쩍 넘기는 초대형 홈런!! ${runs}점 획득!`; break;
+      if(isPlayer)G.myHR=(G.myHR||0)+1;
+      msg=`<b>${batterName}</b>, ${pick(LINES.HR)} ${runs}점 획득!`; break;
     case "2B":
       runs=advance(2,batterName); sfxDouble(); flyBall("FLY"); vib(80);
       fx("2루타!","#4cd964");
-      msg=`<b>${batterName}</b>, 펜스를 직격하는 큼지막한 2루타!`+(runs?` ${runs}점 추가!`:""); break;
+      msg=`<b>${batterName}</b>, ${pick(LINES["2B"])}`+(runs?` ${runs}점 추가!`:""); break;
     case "1B":
       runs=advance(1,batterName); sfxHit(); flyBall("FLY"); vib(50);
       fx("안타!","#4cd964");
-      msg=`<b>${batterName}</b>, 야수 사이를 꿰뚫는 깨끗한 안타!`+(runs?` ${runs}점 추가!`:""); break;
+      msg=`<b>${batterName}</b>, ${pick(LINES["1B"])}`+(runs?` ${runs}점 추가!`:""); break;
     case "BB":
       runs=walk(batterName); sfxWalk(); vib(30);
       fx("볼넷","#6fd3ff");
-      msg=`<b>${batterName}</b>, 침착하게 골라 나가는 볼넷.`+(runs?` 밀어내기 ${runs}점!`:""); break;
+      msg=`<b>${batterName}</b>, ${pick(LINES.BB)}`+(runs?` 밀어내기 ${runs}점!`:""); break;
     case "K":
       G.outs++; vib(40); sfxStrikeout();
       fx("삼진!","#ff5a5a");
-      msg=`<b>${batterName}</b>, 헛스윙 삼진으로 물러납니다.`; break;
+      msg=`<b>${batterName}</b>, ${pick(LINES.K)}`; break;
     case "FO":
       G.outs++; sfxCrack(.25); sfxOut(); flyBall("FLY");
       fx("뜬공 아웃","#ff8c68");
-      msg=`<b>${batterName}</b>의 타구, 야수 글러브에 쏙! 뜬공 아웃.`; break;
+      msg=`<b>${batterName}</b>${pick(LINES.FO)}`; break;
     case "GO":
       G.outs++; sfxCrack(.2); sfxOut(); flyBall("GO");
       fx("땅볼 아웃","#ff8c68");
-      msg=`<b>${batterName}</b>, 땅볼로 잡히고 맙니다.`; break;
+      msg=`<b>${batterName}</b>, ${pick(LINES.GO)}`; break;
   }
   if(result==="1B"||result==="2B"||result==="HR"){
     G.hits[key]++;
@@ -861,6 +922,12 @@ async function applyHitResult(result,batterName,isPlayer){
   }
   // 맞은 투수는 체력이 더 깎인다
   drain(fieldingKey(), ({"1B":2,"2B":3,"HR":5}[result]||0)+runs*3);
+  // 역전/동점 연출
+  if(runs>0&&!ledBefore){
+    const my=sum(G.score[key]), opp=sum(G.score[key==="home"?"away":"home"]);
+    if(my>opp) setTimeout(()=>{fx("역전!!","#ffd23f"); sfxCharge();},950);
+    else if(my===opp) setTimeout(()=>fx("동점!","#6fd3ff"),950);
+  }
   say(msg);
   G.balls=0; G.strikes=0;
   G.batIdx[key]++;
@@ -1202,9 +1269,14 @@ async function gameLoop(){
   }
 }
 function endGame(walkoff,drawForce){
-  G.over=true; hideBall(); updateBoard();
+  G.over=true; hideBall(); updateBoard(); ambient(false);
   const sum=a=>a.reduce((x,y)=>x+(y||0),0);
   const h=sum(G.score.home), a=sum(G.score.away);
+  // 통산 전적 저장
+  const rec=store.get("rec",{w:0,l:0,d:0,hr:0,best:0});
+  if(drawForce||h===a)rec.d++; else if(h>a)rec.w++; else rec.l++;
+  rec.hr+=(G.myHR||0); rec.best=Math.max(rec.best,h);
+  store.set("rec",rec);
   let title, sub;
   if(drawForce||h===a){ title="무승부!"; sub="다음엔 꼭 이기자!"; sfxDraw(); }
   else if(h>a){ title=walkoff?"끝내기 승리!!! 🎉":"승리!!! 🎉"; sub="최고의 경기였어!"; sfxWin(); homerunConfetti(); vib([80,60,80,60,200]); }
@@ -1214,11 +1286,15 @@ function endGame(walkoff,drawForce){
   // MVP: 내 팀 최다 안타
   let mvp=null,mx=0;
   for(const[n,c]of Object.entries(G.myHits)){ if(c>mx){mx=c;mvp=n;} }
+  // 박스스코어: 내 팀 타자별 기록 (안타 많은 순 상위 4명)
+  const box=Object.entries(G.myHits).sort((x,y)=>y[1]-x[1]).slice(0,4)
+    .map(([n,c])=>`${n} ${c}안타`).join(" · ");
   $("mvpCard").innerHTML=
     (mvp?`<div style="display:flex;justify-content:center;margin-bottom:8px;">${avatarSVG(mvp,G.myTeam.color,72)}</div>`:"")+
-    `${G.cpuTeam.short} ${a}점 (${G.hits.away}안타) · ${G.myTeam.short} ${h}점 (${G.hits.home}안타)<br>`+
+    `${G.cpuTeam.short} ${a}점 (${G.hits.away}안타) · ${G.myTeam.short} ${h}점 (${G.hits.home}안타${G.myHR?` · 홈런 ${G.myHR}방`:""})<br>`+
     (mvp?`오늘의 MVP <b>${mvp}</b> — ${mx}안타!<br>`:"")+
-    `${sub}`;
+    (box?`<span style="color:var(--muted);font-size:11.5px;">${box}</span><br>`:"")+
+    `${sub}<br><span style="color:var(--muted);font-size:11px;">통산 ${rec.w}승 ${rec.l}패 ${rec.d}무</span>`;
   setTimeout(()=>$("ovResult").classList.remove("hidden"),1200);
 }
 
@@ -1268,7 +1344,20 @@ $("btnTeamOk").onclick=()=>{
   }
 };
 $("btnAgain").onclick=()=>location.reload();
-$("mute").onclick=()=>{ muted=!muted; $("mute").textContent=muted?"🔇":"🔊"; };
+function updateRecLine(){
+  const r=store.get("rec",null);
+  $("recLine").textContent=r?`통산 ${r.w}승 ${r.l}패 ${r.d}무 · 홈런 ${r.hr}개 · 한 경기 최다 ${r.best}점`:"";
+}
+updateRecLine();
+$("btnHelp").onclick=()=>{ beep(660,.1,"square",.1); $("ovHelp").classList.remove("hidden"); };
+$("btnHelpClose").onclick=()=>{ beep(660,.1,"square",.1); $("ovHelp").classList.add("hidden"); };
+function syncSetBtns(){
+  $("mute").textContent=muted?"🔇":"🔊"; $("mute").classList.toggle("off",muted);
+  $("vibBtn").classList.toggle("off",!SET.vib);
+}
+syncSetBtns();
+$("mute").onclick=()=>{ muted=!muted; SET.snd=!muted; store.set("snd",SET.snd); syncSetBtns(); if(muted)ambient(false); else if(!G.over&&G.myTeam)ambient(true); };
+$("vibBtn").onclick=()=>{ SET.vib=!SET.vib; store.set("vib",SET.vib); syncSetBtns(); if(SET.vib)vib(30); };
 function startGame(){
   G.inning=1;G.top=true;G.over=false;
   G.score={away:Array(G.maxInning).fill(null),home:Array(G.maxInning).fill(null)};
@@ -1276,6 +1365,8 @@ function startGame(){
   const buildStaff=t=>({cur:0, used:t.pit.map(()=>false), stam:t.pit.map(p=>stamMax(p[3]))});
   G.staff={home:buildStaff(G.myTeam), away:buildStaff(G.cpuTeam)};
   G.benchUsed=G.myTeam.bench.map(()=>false);
+  G.myHR=0;
+  ambient(true);
   updateBoard();
   gameLoop();
 }
